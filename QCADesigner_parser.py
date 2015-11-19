@@ -33,9 +33,9 @@ def read_qca_file ():
 							cells.append(QCADCell(x, y, mode, function, clock))
 #							circuit_layout [x][y][clock] = len(cells) - 1
 							if (function ==  'QCAD_CELL_INPUT'):
-								inputs.append(len(cells - 1))
+								inputs.append(len(cells) - 1)
 							if (function ==  'QCAD_CELL_OUTPUT'):
-								outputs.append(len(cells - 1))
+								outputs.append(len(cells) - 1)
 							del clock
 							del function
 							del mode
@@ -47,7 +47,7 @@ def read_qca_file ():
  					clock = line[19:]
 # 					print 'clock= ' + clock
  				if (line[0:14] == 'cell_function='):
- 					function = line[14:]
+ 					function = line[14:-1]
 # 					print 'function= ' + function
  				if (line[0:18] == 'cell_options.mode='):
  					mode = line[18:]
