@@ -1,4 +1,5 @@
 import sys
+import graph
 
 
 class QCADCell(object):
@@ -65,4 +66,39 @@ def read_qca_file ():
 	return cells
 
 cells = read_qca_file()
-print len(cells)
+# for cell in cells:
+# 	print "X: %d" % cell.x
+# 	print "Y: %d" % cell.y
+# 	print "Mode: %s" % cell.mode
+# 	print "Function: %s" % cell.function
+# 	print "Clock: %s" % cell.clock
+# 	print "\n"
+
+g = graph.Graph()
+count = 0
+for cell in cells:
+	n = graph.Node(count, cell)
+	g.insert_node(n)
+	count += 1
+
+z = 20
+cell_number = 0
+for cell in cells:
+	node1 = g.get_node(cell_number)
+	cell2_number = 0
+	for cell2 in cells:
+		if cell_number == cell2_number:
+			continue
+		node2 = g.get_node(cell2_number)
+		if node1.cell.x == node2.cell.x:
+			if node1.cell.y + z == node2.cell.y or node1.cell.y - z == node2.cell.y:
+				g.insert_edge(node1, node2)
+				g.insert_edge(node2, node1)
+		elif node1.cell.y == node2.cell.y:
+			if node1.cell.x + z == node2.cell.x or node1.cell.x - z == node2.cell.x:
+				g.insert_edge(node1, node2)
+				g.insert_edge(node2, node1)
+		cell2_number += 1
+	cell_number += 1
+
+g.print_graph()
