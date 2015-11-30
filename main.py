@@ -1,6 +1,22 @@
 import sys
 import graph
-
+# from threading import Thread
+#
+# threads_number = []
+# class Th(Thread):
+# 	def __init__ (self, num, first_node, visited_nodes, graph):
+# 	      Thread.__init__(self)
+# 	      self.num = num
+# 		  self.first_node = first_node
+# 		  self.visited_nodes = visited_nodes
+#
+# 	def run(self):
+# 		threads_number.append(self.num)
+# 		if len(graph[first_node.number]) = 3:
+#
+#
+# a = Th(1)
+# a.start()
 
 class QCADCell(object):
 	def __init__(self, x, y, mode, function, clock):
@@ -25,9 +41,11 @@ def read_qca_file ():
 		exit(1)
 	with open(sys.argv[1]) as f:
  		for line in f.readlines():
+			line = line.replace("\r\n","").replace("\n","").replace("\r","")
+
 			if (line[0] == '['):
 				if (line[1] != '#'):
-					block_tag.append(line[0:-1])
+					block_tag.append(line)
 				else:
 					if (len(block_tag) >= 3):
 						if (block_tag[-1] == '[TYPE:QCADCell]'):
@@ -48,7 +66,7 @@ def read_qca_file ():
  					clock = line[19:]
 # 					print 'clock= ' + clock
  				if (line[0:14] == 'cell_function='):
- 					function = line[14:-1]
+ 					function = line[14:]#-1
 # 					print 'function= ' + function
  				if (line[0:18] == 'cell_options.mode='):
  					mode = line[18:]
@@ -56,23 +74,25 @@ def read_qca_file ():
                         elif (len(block_tag) >= 3):
 				if ((block_tag[-2] == '[TYPE:QCADCell]') & (block_tag[-1] == '[TYPE:QCADDesignObject]')):
 					if (line[0:2] == 'x='):
- 						x = float(line[2:])
+
+ 						x = float(line[2:].replace(",","."))
 # 						print  'String ', line, '***|x = ', x
 					if (line[0:2] == 'y='):
- 						y = float(line[2:])
+ 						y = float(line[2:].replace(",","."))
 # 						print  'String ', line, '***|y = ',  y
 #			print block_tag
 #	return [cells, circuit_layout, inputs, outputs]
 	return cells
 
 cells = read_qca_file()
-# for cell in cells:
-# 	print "X: %d" % cell.x
-# 	print "Y: %d" % cell.y
-# 	print "Mode: %s" % cell.mode
-# 	print "Function: %s" % cell.function
-# 	print "Clock: %s" % cell.clock
-# 	print "\n"
+
+for cell in cells:
+	print "X: %d" % cell.x
+	print "Y: %d" % cell.y
+	print "Mode: %s" % cell.mode
+	print "Function: %s" % cell.function
+	print "Clock: %s" % cell.clock
+	print "\n"
 
 g = graph.Graph()
 count = 0
