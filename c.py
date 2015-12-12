@@ -45,7 +45,6 @@ def process_nodes(graphElements, graphCells, nodeCell, nodeElement):
                         
                         # Verifica se é uma célula fixa, isso pode mudar o tipo do elemento anterior.
                         if cellNeigbor.function == "QCAD_CELL_FIXED":
-                            print("Fixa %d %s %s" % (cellNeigbor.value, cellNeigbor.value == -1.0, nodeElement.cell.type))
                             if nodeElement.cell.type == e.ElementType.Trifurcation:
                                 if cellNeigbor.value == 1.0:
                                     print("PortaOR")
@@ -53,6 +52,10 @@ def process_nodes(graphElements, graphCells, nodeCell, nodeElement):
                                 elif cellNeigbor.value == -1.0:
                                     print("PortaAND")
                                     nodeElement.cell.type = e.ElementType.PortAnd
+                        # Verifica se é uma entrada, com isso o tipo será um MajorGate, pois contém mais de uma entrada.
+                        elif cellNeigbor.function == "QCAD_CELL_INPUT":
+                            if nodeElement.cell.type == e.ElementType.Trifurcation:
+                                nodeElement.cell.type = e.ElementType.MajorGate
                     else:
                         newNodeElement = graphElements.create_next_node(nodeElement, e.Element(type, previousCell.function, previousCell.clock, previousCell))
                         cellNeigbor.segmento = newNodeElement.number
