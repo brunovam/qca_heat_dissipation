@@ -15,7 +15,6 @@ def process_nodes(graphElements, graphCells, nodeCell, nodeElement):
         cellNeigbor = nodeNeigborCell.cell
         
         if nodeNeigborCell != nodeCell:
-            print("node inicial %d (%s) vizinho %d .." % (nodeCell.number, nodeCell.cell.function, nodeNeigborCell.number))
             
             # Verifica se o vertice ja foi visitado
             if nodeNeigborCell.color == "b":
@@ -26,7 +25,6 @@ def process_nodes(graphElements, graphCells, nodeCell, nodeElement):
                 if previousCell.clock != cellNeigbor.clock:
                     newNodeElement = graphElements.create_next_node(nodeElement, e.Element(e.ElementType.Line, previousCell.function, previousCell.clock))
                     cellNeigbor.segmento = newNodeElement.number
-                    print("\t\tVertice %d..." % newNodeElement.number)
                 else:
                     # Apartir do numero de conexoes podemos deduzir os tipos de porta
                     conections = len(graphCells.get_neighbors(nodeNeigborCell.number)) - 2
@@ -43,14 +41,12 @@ def process_nodes(graphElements, graphCells, nodeCell, nodeElement):
                     # Verifica o tipo de elemento
                     if type == None:
                         
-                        # Verifica se é uma célula fixa, isso pode mudar o tipo do elemento anterior.
+                        # Verifica se é uma célula fixa, isso pode mudar o tipo do elemento anterior para Porta OR ou AND
                         if cellNeigbor.function == "QCAD_CELL_FIXED":
                             if nodeElement.cell.type == e.ElementType.Trifurcation:
                                 if cellNeigbor.value == 1.0:
-                                    print("PortaOR")
                                     nodeElement.cell.type = e.ElementType.PortOr
                                 elif cellNeigbor.value == -1.0:
-                                    print("PortaAND")
                                     nodeElement.cell.type = e.ElementType.PortAnd
                         # Verifica se é uma entrada, com isso o tipo será um MajorGate, pois contém mais de uma entrada.
                         elif cellNeigbor.function == "QCAD_CELL_INPUT":
@@ -59,24 +55,20 @@ def process_nodes(graphElements, graphCells, nodeCell, nodeElement):
                     else:
                         newNodeElement = graphElements.create_next_node(nodeElement, e.Element(type, previousCell.function, previousCell.clock, previousCell))
                         cellNeigbor.segmento = newNodeElement.number
-                        print("\t\tVertice doido %d %d .." % (cellNeigbor.segmento, newNodeElement.number))
                 
                 if newNodeElement == None:
                     newNodeElement = nodeElement
                 process_nodes(graphElements, graphCells, nodeNeigborCell, newNodeElement)
             else:
-                # Se ja foi visitado, entao, somente, cria uma aresta.
+                # Se ja foi visitado, entao, somente, cria uma aresta, se a mesma já não existe.
                 node1 = graphElements.get_node(cellNeigbor.segmento)
                 if not graphElements.check_edge(node1, nodeElement):
-                    print("\t\tligacao seguimento... number %d celula %d node %d" % (nodeNeigborCell.number, cellNeigbor.segmento, node1.number))
                     #node2 = graphFinal.get_node(node.cell.segmento)
                     graphElements.insert_edge(node1, nodeElement)
                     graphElements.insert_edge(nodeElement, node1)
                 
-    # Verifica se nao e um fim de percurso.
-    print("Found %d" % found)
+    # Verifica se eh o fim de percurso.
     if found == 0:
-        print("\t\tfim do seguimento...fim")
         if previousCell.function == "QCAD_CELL_FIXED":
             type = e.ElementType.Fixed
         elif previousCell.function == "QCAD_CELL_OUTPUT":
@@ -89,11 +81,8 @@ def convert(cells):
     graphFinal = graph.Graph()
     for node in cells.starts:
         cell = node.cell
-        print("\tNode %d %d %s" % (cell.x, cell.y, cell.function))
         newNode = graph.Node(graphFinal.get_length(), e.Element(e.ElementType.Input, cell.function, cell.clock, cell))
         cell.segmento = newNode.number
-        print("\t\tVertice %d %d .." % (cell.segmento, newNode.number))
-        print("Node celular %d segmento %d" % (cell.segmento, newNode.number))
         graphFinal.insert_node(newNode, True)
         process_nodes(graphFinal, cells, node, newNode)
 
