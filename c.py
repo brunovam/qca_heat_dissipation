@@ -6,6 +6,7 @@ import e
 # Sao vertices aresta do grafo.
 
 def process_nodes(graphElements, graphCells, nodeCell, nodeElement):
+    z = 20
     nodeCell.color = "c"
     previousCell = nodeCell.cell
     found = 0
@@ -38,6 +39,10 @@ def process_nodes(graphElements, graphCells, nodeCell, nodeElement):
                     elif conections == 2:
                         type = e.ElementType.Bifurcation
 
+                    #inveror na horizontal ou inversor na vertical
+                    if (abs(cellNeigbor.x - previousCell.x) == z and abs(cellNeigbor.y - previousCell.y) == z / 2) or (abs(cellNeigbor.y - previousCell.y) == z and abs(cellNeigbor.x - previousCell.y) == x / 2):
+                        type = e.ElementType.Inverter
+
                     # Verifica o tipo de elemento
                     if type == None:
                         
@@ -48,6 +53,7 @@ def process_nodes(graphElements, graphCells, nodeCell, nodeElement):
                                     nodeElement.cell.type = e.ElementType.PortOr
                                 elif cellNeigbor.value == -1.0:
                                     nodeElement.cell.type = e.ElementType.PortAnd
+                        
                         # Verifica se é uma entrada, com isso o tipo será um MajorGate, pois contém mais de uma entrada.
                         elif cellNeigbor.function == "QCAD_CELL_INPUT":
                             if nodeElement.cell.type == e.ElementType.Trifurcation:
@@ -75,6 +81,8 @@ def process_nodes(graphElements, graphCells, nodeCell, nodeElement):
             type = e.ElementType.Output
         elif previousCell.function == "QCAD_CELL_INPUT":
             type = e.ElementType.Input
+        else:
+            print(previousCell.function)
         graphElements.create_next_node(nodeElement, e.Element(type, previousCell.function, previousCell.clock, previousCell))
 
 def convert(cells):
