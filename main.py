@@ -94,14 +94,14 @@ for cell in cells:
         node2 = g.get_node(cell2_number)
         if node1.cell.x == node2.cell.x or abs(node1.cell.x - node2.cell.x) == z / 2:
             if abs(node1.cell.y - node2.cell.y) == z:
-                print("\tNode %d %d %d %s" % (node1.number, node1.cell.x, node1.cell.y, node1.cell.function))
-                print("\t\tNode %d %d %d %s" % (node2.number, node2.cell.x, node2.cell.y, node2.cell.function))
+#                print("\tNode %d %d %d %s" % (node1.number, node1.cell.x, node1.cell.y, node1.cell.function))
+#                print("\t\tNode %d %d %d %s" % (node2.number, node2.cell.x, node2.cell.y, node2.cell.function))
                 g.insert_edge(node1, node2)
                 g.insert_edge(node2, node1)
         elif node1.cell.y == node2.cell.y or abs(node1.cell.y - node2.cell.y) == z / 2:
             if abs(node1.cell.x - node2.cell.x) == z:
-                print("\tNode %d %d %d %s" % (node1.number, node1.cell.x, node1.cell.y, node1.cell.function))
-                print("\t\tNode %d %d %d %s" % (node2.number, node2.cell.x, node2.cell.y, node2.cell.function))
+#                print("\tNode %d %d %d %s" % (node1.number, node1.cell.x, node1.cell.y, node1.cell.function))
+#                print("\t\tNode %d %d %d %s" % (node2.number, node2.cell.x, node2.cell.y, node2.cell.function))
                 g.insert_edge(node1, node2)
                 g.insert_edge(node2, node1)
         cell2_number += 1
