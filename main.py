@@ -50,6 +50,8 @@ def read_qca_file ():
                      mode = line[18:]
 #                    print 'mode= ' + mode
             elif (len(block_tag) >= 3):
+                #print(block_tag[2])
+                #[TYPE:CELL_DOT]
                 if ((block_tag[-2] == '[TYPE:QCADCell]') & (block_tag[-1] == '[TYPE:QCADDesignObject]')):
                     if (line[0:2] == 'x='):
 
@@ -57,11 +59,8 @@ def read_qca_file ():
 #                         print  'String ', line, '***|x = ', x
                     if (line[0:2] == 'y='):
                          y = float(line[2:].replace(",","."))
-#                         print  'String ', line, '***|y = ',  y
+                         #print('String ', line, '***|y = ',  y)
             
-            # Valor fixo da celula
-            if (line[0:4] == 'psz=' and line[4:] != ""):
-                value = float(line[4:].replace(",","."))
 #            print block_tag
 #    return [cells, circuit_layout, inputs, outputs]
     return cells
@@ -93,16 +92,16 @@ for cell in cells:
         if cell_number == cell2_number:
             continue
         node2 = g.get_node(cell2_number)
-        if node1.cell.x == node2.cell.x:
-            if node1.cell.y + z == node2.cell.y or node1.cell.y - z == node2.cell.y:
-                #print("\tNode %d %d %d %s" % (node1.number, node1.cell.x, node1.cell.y, node1.cell.function))
-                #print("\t\tNode %d %d %d %s" % (node2.number, node2.cell.x, node2.cell.y, node2.cell.function))
+        if node1.cell.x == node2.cell.x or abs(node1.cell.x - node2.cell.x) == z / 2:
+            if abs(node1.cell.y - node2.cell.y) == z:
+                print("\tNode %d %d %d %s" % (node1.number, node1.cell.x, node1.cell.y, node1.cell.function))
+                print("\t\tNode %d %d %d %s" % (node2.number, node2.cell.x, node2.cell.y, node2.cell.function))
                 g.insert_edge(node1, node2)
                 g.insert_edge(node2, node1)
-        elif node1.cell.y == node2.cell.y:
-            if node1.cell.x + z == node2.cell.x or node1.cell.x - z == node2.cell.x:
-                #print("\tNode %d %d %d %s" % (node1.number, node1.cell.x, node1.cell.y, node1.cell.function))
-                #print("\t\tNode %d %d %d %s" % (node2.number, node2.cell.x, node2.cell.y, node2.cell.function))
+        elif node1.cell.y == node2.cell.y or abs(node1.cell.y - node2.cell.y) == z / 2:
+            if abs(node1.cell.x - node2.cell.x) == z:
+                print("\tNode %d %d %d %s" % (node1.number, node1.cell.x, node1.cell.y, node1.cell.function))
+                print("\t\tNode %d %d %d %s" % (node2.number, node2.cell.x, node2.cell.y, node2.cell.function))
                 g.insert_edge(node1, node2)
                 g.insert_edge(node2, node1)
         cell2_number += 1
