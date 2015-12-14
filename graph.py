@@ -6,6 +6,9 @@ class Node:
         self.number = number
         self.cell = cell
 
+    def __str__(self):
+        return "number: %d \n  cell: %s" % (self.number, self.cell)
+        
 class Graph:
     graph = None
     inputs = None
