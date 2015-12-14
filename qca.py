@@ -7,3 +7,5 @@ class QCADCell(object):
         self.function = function
         self.clock = clock
         self.value = value
+    def __str__(self):        
+        return "x: %f y: %f" % (self.x, self.y)
