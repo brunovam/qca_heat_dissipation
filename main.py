@@ -79,7 +79,7 @@ g = graph.Graph()
 count = 0
 for cell in cells:
     n = graph.Node(count, cell)
-    g.insert_node(n, cell.function == "QCAD_CELL_INPUT")
+    g.insert_node(n, cell.function == "QCAD_CELL_INPUT" or cell.function == "QCAD_CELL_FIXED")
     count += 1
 
 z = 20
@@ -96,12 +96,14 @@ for cell in cells:
             if abs(node1.cell.y - node2.cell.y) == z:
 #                print("\tNode %d %d %d %s" % (node1.number, node1.cell.x, node1.cell.y, node1.cell.function))
 #                print("\t\tNode %d %d %d %s" % (node2.number, node2.cell.x, node2.cell.y, node2.cell.function))
+#                print("%d\t%d " % (node1.number, node2.number))
                 g.insert_edge(node1, node2)
                 g.insert_edge(node2, node1)
         elif node1.cell.y == node2.cell.y or abs(node1.cell.y - node2.cell.y) == z / 2:
             if abs(node1.cell.x - node2.cell.x) == z:
 #                print("\tNode %d %d %d %s" % (node1.number, node1.cell.x, node1.cell.y, node1.cell.function))
 #                print("\t\tNode %d %d %d %s" % (node2.number, node2.cell.x, node2.cell.y, node2.cell.function))
+#                print("%d\t%d " % (node1.number, node2.number))
                 g.insert_edge(node1, node2)
                 g.insert_edge(node2, node1)
         cell2_number += 1
