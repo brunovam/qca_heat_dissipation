@@ -17,3 +17,5 @@ class Element(object):
         self.function = function
         self.clock = clock
         self.cell = cell
+    def __str__(self):        
+        return "type: %s function: %s clock: %s cell: %s" % (self.type, self.function, self.clock, self.cell)
