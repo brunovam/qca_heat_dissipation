@@ -24,7 +24,7 @@ def process_nodes(graphElements, graphCells, nodeCell, nodeElement):
                 
                 # Verifica se houve mudanca de clock, isso significa um novo vertice
                 if previousCell.clock != cellNeigbor.clock:
-                    newNodeElement = graphElements.create_next_node(nodeElement, e.Element(e.ElementType.Line, previousCell.function, previousCell.clock))
+                    newNodeElement = graphElements.create_next_node(nodeElement, e.Element(e.ElementType.Line, previousCell.function, previousCell.clock, previousCell))
                     cellNeigbor.segmento = newNodeElement.number
                 else:
                     # Apartir do numero de conexoes podemos deduzir os tipos de porta
@@ -33,14 +33,14 @@ def process_nodes(graphElements, graphCells, nodeCell, nodeElement):
                     
                     # Iniciamente pode ser: trifurcacao, MajorGate, And ou Or
                     if conections == 3:
-                        type = e.ElementType.Trifurcation
+                        type = e.ElementType.MajorGate
                     
                     # Iniciamente pode ser uma bifurcacao
                     elif conections == 2:
                         type = e.ElementType.Bifurcation
 
                     #inveror na horizontal ou inversor na vertical
-                    if (abs(cellNeigbor.x - previousCell.x) == z and abs(cellNeigbor.y - previousCell.y) == z / 2) or (abs(cellNeigbor.y - previousCell.y) == z and abs(cellNeigbor.x - previousCell.y) == x / 2):
+                    if (abs(cellNeigbor.x - previousCell.x) == z and abs(cellNeigbor.y - previousCell.y) == z / 2) or (abs(cellNeigbor.y - previousCell.y) == z and abs(cellNeigbor.x - previousCell.y) == z / 2):
                         type = e.ElementType.Inverter
 
                     # Verifica o tipo de elemento
@@ -82,21 +82,29 @@ def process_nodes(graphElements, graphCells, nodeCell, nodeElement):
         elif previousCell.function == "QCAD_CELL_INPUT":
             type = e.ElementType.Input
         else:
-            print(previousCell.function)
-        graphElements.create_next_node(nodeElement, e.Element(type, previousCell.function, previousCell.clock, previousCell))
+            type = None
+            print("Fim de percurso sem porta de saida... %s" % previousCell.function)
+        if type != None:
+            graphElements.create_next_node(nodeElement, e.Element(type, previousCell.function, previousCell.clock, previousCell))
 
 def convert(cells):
     graphFinal = graph.Graph()
     for node in cells.starts:
-        cell = node.cell
-        newNode = graph.Node(graphFinal.get_length(), e.Element(e.ElementType.Input, cell.function, cell.clock, cell))
-        cell.segmento = newNode.number
-        graphFinal.insert_node(newNode, True)
-        process_nodes(graphFinal, cells, node, newNode)
+        if node.color == "b":
+            cell = node.cell
+            if cell.function == "QCAD_CELL_INPUT":
+                type = e.ElementType.Input
+            elif cell.function == "QCAD_CELL_FIXED":
+                type = e.ElementType.Fixed
+            newNode = graph.Node(graphFinal.get_length(), e.Element(type, cell.function, cell.clock, cell))
+            cell.segmento = newNode.number
+            graphFinal.insert_node(newNode, True)
+            process_nodes(graphFinal, cells, node, newNode)
 
     for n in graphFinal.graph:
         print("\n%d" % (n) )
         for node in graphFinal.graph[n]:
+            #print("\t %" % node)
             print("\t(node %d type %s x %d y %d)" % (node.number, node.cell.type, node.cell.cell.x, node.cell.cell.y))
             
     return graphFinal
