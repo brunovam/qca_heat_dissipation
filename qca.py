@@ -9,3 +9,4 @@ class QCADCell(object):
         self.value = value
     def __str__(self):        
         return "x: %f y: %f" % (self.x, self.y)
+
