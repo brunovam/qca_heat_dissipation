@@ -6,6 +6,7 @@ import e
 # Sao vertices aresta do grafo.
 
 def process_nodes(graphElements, graphCells, nodeCell, nodeElement):
+    #print("node cell %d node element %d %s" % (nodeCell.number, nodeElement.number, nodeCell))
     z = 20
     nodeCell.color = "c"
     previousCell = nodeCell.cell
@@ -31,13 +32,13 @@ def process_nodes(graphElements, graphCells, nodeCell, nodeElement):
                     conections = len(graphCells.get_neighbors(nodeNeigborCell.number)) - 2
                     type = None
                     
-                    # Iniciamente pode ser: trifurcacao, MajorGate, And ou Or
+                    # Iniciamente pode ser: MajorGate, And ou Or
                     if conections == 3:
                         type = e.ElementType.MajorGate
                     
                     # Iniciamente pode ser uma bifurcacao
-                    elif conections == 2:
-                        type = e.ElementType.Bifurcation
+                    #elif conections == 2:
+                    #    type = e.ElementType.Bifurcation
 
                     #inveror na horizontal ou inversor na vertical
                     if (abs(cellNeigbor.x - previousCell.x) == z and abs(cellNeigbor.y - previousCell.y) == z / 2) or (abs(cellNeigbor.y - previousCell.y) == z and abs(cellNeigbor.x - previousCell.y) == z / 2):
@@ -87,9 +88,9 @@ def process_nodes(graphElements, graphCells, nodeCell, nodeElement):
         if type != None:
             graphElements.create_next_node(nodeElement, e.Element(type, previousCell.function, previousCell.clock, previousCell))
 
-def convert(cells):
+def convert(graphCells):
     graphFinal = graph.Graph()
-    for node in cells.starts:
+    for node in graphCells.starts:
         if node.color == "b":
             cell = node.cell
             if cell.function == "QCAD_CELL_INPUT":
@@ -99,12 +100,12 @@ def convert(cells):
             newNode = graph.Node(graphFinal.get_length(), e.Element(type, cell.function, cell.clock, cell))
             cell.segmento = newNode.number
             graphFinal.insert_node(newNode, True)
-            process_nodes(graphFinal, cells, node, newNode)
+            process_nodes(graphFinal, graphCells, node, newNode)
 
-    for n in graphFinal.graph:
-        print("\n%d" % (n) )
-        for node in graphFinal.graph[n]:
-            #print("\t %" % node)
-            print("\t(node %d type %s x %d y %d)" % (node.number, node.cell.type, node.cell.cell.x, node.cell.cell.y))
+#    for n in graphFinal.graph:
+#        print("\n%d" % (n) )
+#        for node in graphFinal.graph[n]:
+#            #print("\t %" % node)
+#            print("\t(node %d type %s x %d y %d)" % (node.number, node.cell.type, node.cell.cell.x, node.cell.cell.y))
             
     return graphFinal
