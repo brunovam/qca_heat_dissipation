@@ -109,4 +109,21 @@ for cell in cells:
         cell2_number += 1
     cell_number += 1
 #g.print_graph()
-c.convert(g)
+newG = c.convert(g)
+
+def get_neighbors(graph, node):
+    for nodeNeigbor in graph.get_neighbors(node.number):
+        if nodeNeigbor != node and node.color == "b":
+            nodeNeigbor.color = "c"
+            print(node)
+            print("resultado:")
+            for value in node.cell.get_saida(graph, nodeNeigbor):
+                print(value)
+            get_neighbors(graph, nodeNeigbor)
+
+for node in newG.starts:
+    if (node.color == "b"):
+        node.color = "c"
+        print(node)
+        print(node.cell.get_saida(newG, node))
+        get_neighbors(newG, node)
